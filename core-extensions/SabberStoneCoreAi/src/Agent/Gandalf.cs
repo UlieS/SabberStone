@@ -24,6 +24,7 @@ namespace SabberStoneCoreAi.Agent
 			// gives all available options
 			List<PlayerTask> options = poGame.CurrentPlayer.Options();
 			
+			
 			//take mulligan if needed
 			foreach(PlayerTask task in options){
 

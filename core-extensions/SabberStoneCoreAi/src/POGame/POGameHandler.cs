@@ -8,10 +8,8 @@ using SabberStoneCore.Tasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 
-namespace SabberStoneCoreAi.POGame
-{
-	class POGameHandler
-	{
+namespace SabberStoneCoreAi.POGame {
+	class POGameHandler {
 		private bool debug;
 
 		private AbstractAgent player1;
@@ -21,65 +19,62 @@ namespace SabberStoneCoreAi.POGame
 		private bool setupHeroes = true;
 
 		private GameStats gameStats;
-		private static readonly Random Rnd = new Random();
+		private static readonly Random Rnd = new Random ();
 
-
-		public POGameHandler(GameConfig gameConfig, AbstractAgent player1, AbstractAgent player2,  bool setupHeroes = true, bool debug=false)
-		{
+		public POGameHandler (GameConfig gameConfig, AbstractAgent player1, AbstractAgent player2, bool setupHeroes = true, bool debug = false) {
 			this.gameConfig = gameConfig;
 			this.setupHeroes = setupHeroes;
 			this.player1 = player1;
-			player1.InitializeAgent();
+			player1.InitializeAgent ();
 
 			this.player2 = player2;
-			player2.InitializeAgent();
+			player2.InitializeAgent ();
 
-			gameStats = new GameStats();
+			gameStats = new GameStats ();
 			this.debug = debug;
 		}
 
-		public bool PlayGame(bool addToGameStats=true)
-		{
-			Game game = new Game(gameConfig, setupHeroes);
-			player1.InitializeGame();
-			player2.InitializeGame();
+		public bool PlayGame (bool addToGameStats = true) {
+			Game game = new Game (gameConfig, setupHeroes);
+			player1.InitializeGame ();
+			player2.InitializeGame ();
 
 			AbstractAgent currentAgent;
 			Stopwatch currentStopwatch;
 			POGame poGame;
 			PlayerTask playertask = null;
-			Stopwatch[] watches = new[] {new Stopwatch(), new Stopwatch()};
-			
-			game.StartGame();
-			try
-			{
-				while (game.State != State.COMPLETE && game.State != State.INVALID)
-				{
+			Stopwatch[] watches = new [] { new Stopwatch (), new Stopwatch () };
+
+			game.StartGame ();
+			try {
+				while (game.State != State.COMPLETE && game.State != State.INVALID) {
 					if (debug)
-						Console.WriteLine("Turn " + game.Turn);
+						Console.WriteLine ("Turn " + game.Turn);
 
 					currentAgent = game.CurrentPlayer == game.Player1 ? player1 : player2;
 					Controller currentPlayer = game.CurrentPlayer;
 					currentStopwatch = game.CurrentPlayer == game.Player1 ? watches[0] : watches[1];
-					poGame = new POGame(game, debug);
+					poGame = new POGame (game, debug);
 
-					currentStopwatch.Start();
-					playertask = currentAgent.GetMove(poGame);
-					currentStopwatch.Stop();
+					currentStopwatch.Start ();
+					playertask = currentAgent.GetMove (poGame);
+					currentStopwatch.Stop ();
 
 					game.CurrentPlayer.Game = game;
 					game.CurrentOpponent.Game = game;
-
+					for (int i = 0; i < game.CurrentPlayer.Options ().Count; i++) {
+						Console.WriteLine (game.CurrentPlayer.Options () [i].FullPrint ());
+					}
+					throw new Exception ();
 					if (debug)
-						Console.WriteLine(playertask);
-					game.Process(playertask);
+						Console.WriteLine (playertask);
+					game.Process (playertask);
 				}
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			//Current Player loses if he throws an exception
 			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.StackTrace);
+				Console.WriteLine (e.Message);
+				Console.WriteLine (e.StackTrace);
 				game.State = State.COMPLETE;
 				game.CurrentPlayer.PlayState = PlayState.CONCEDED;
 				game.CurrentOpponent.PlayState = PlayState.WON;
@@ -89,24 +84,21 @@ namespace SabberStoneCoreAi.POGame
 				return false;
 
 			if (addToGameStats)
-				gameStats.addGame(game, watches);
+				gameStats.addGame (game, watches);
 
-			player1.FinalizeGame();
-			player2.FinalizeGame();
+			player1.FinalizeGame ();
+			player2.FinalizeGame ();
 			return true;
 		}
 
-		public void PlayGames(int nr_of_games, bool addToGameStats=true)
-		{
-			for (int i = 0; i < nr_of_games; i++)
-			{
-				if (!PlayGame(addToGameStats))
-					i -= 1;		// invalid game
+		public void PlayGames (int nr_of_games, bool addToGameStats = true) {
+			for (int i = 0; i < nr_of_games; i++) {
+				if (!PlayGame (addToGameStats))
+					i -= 1; // invalid game
 			}
 		}
 
-		public GameStats getGameStats()
-		{
+		public GameStats getGameStats () {
 			return gameStats;
 		}
 	}

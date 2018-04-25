@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using SabberStoneCore.Config;
 using SabberStoneCore.Enums;
 using SabberStoneCore.Model;
 using SabberStoneCore.Model.Entities;
 using SabberStoneCore.Tasks;
+using SabberStoneCore.Tasks.PlayerTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 
@@ -62,8 +64,22 @@ namespace SabberStoneCoreAi.POGame {
 
 					game.CurrentPlayer.Game = game;
 					game.CurrentOpponent.Game = game;
-					for (int i = 0; i < game.CurrentPlayer.Options ().Count; i++) {
-						Console.WriteLine (game.CurrentPlayer.Options () [i].FullPrint ());
+					//
+					IPlayable[] cardsToKeep = game.CurrentPlayer.HandZone.GetAll (p => p.Card.Cost < 4);
+
+					foreach (ChooseTask option in game.CurrentPlayer.Options ()) {
+						ChooseTask chooseTask = (ChooseTask) option;
+
+						bool equal = true;
+
+						foreach (IPlayable card in cardsToKeep) {
+							if (!chooseTask.Choices.Contains (card.Id)) {
+								equal = false;
+							}
+						}
+						if (equal && chooseTask.Choices.Count == cardsToKeep.Length) {
+							Console.WriteLine (chooseTask.FullPrint ());
+						}
 					}
 					throw new Exception ();
 					if (debug)

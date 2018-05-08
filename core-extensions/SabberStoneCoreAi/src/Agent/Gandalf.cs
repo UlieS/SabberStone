@@ -21,8 +21,6 @@ namespace SabberStoneCoreAi.Agent {
 			foreach (PlayerTask task in options) {
 
 				if (task.PlayerTaskType == PlayerTaskType.CHOOSE) {
-					//poGame.CurrentPlayer.HandZone
-					//throw new NotImplementedException();
 					return task;
 				}
 			}

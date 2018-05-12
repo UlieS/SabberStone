@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using SabberStoneCore.Config;
 using SabberStoneCore.Enums;
 using SabberStoneCore.Model;
 using SabberStoneCore.Model.Entities;
 using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
+using SabberStoneCore.Visualizer;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 
@@ -50,9 +52,6 @@ namespace SabberStoneCoreAi.POGame {
 			game.StartGame ();
 			try {
 				while (game.State != State.COMPLETE && game.State != State.INVALID) {
-					if (debug)
-						Console.WriteLine ("Turn " + game.Turn);
-
 					currentAgent = game.CurrentPlayer == game.Player1 ? player1 : player2;
 					Controller currentPlayer = game.CurrentPlayer;
 					currentStopwatch = game.CurrentPlayer == game.Player1 ? watches[0] : watches[1];
@@ -64,26 +63,12 @@ namespace SabberStoneCoreAi.POGame {
 
 					game.CurrentPlayer.Game = game;
 					game.CurrentOpponent.Game = game;
-					//
-					IPlayable[] cardsToKeep = game.CurrentPlayer.HandZone.GetAll (p => p.Card.Cost < 4);
 
-					foreach (ChooseTask option in game.CurrentPlayer.Options ()) {
-						ChooseTask chooseTask = (ChooseTask) option;
-
-						bool equal = true;
-
-						foreach (IPlayable card in cardsToKeep) {
-							if (!chooseTask.Choices.Contains (card.Id)) {
-								equal = false;
-							}
-						}
-						if (equal && chooseTask.Choices.Count == cardsToKeep.Length) {
-							Console.WriteLine (chooseTask.FullPrint ());
-						}
+					if (debug) {
+						Console.WriteLine ("Turn " + game.Turn);
+						Console.WriteLine (Visualizer.Visualize (game));
+						Console.WriteLine (playertask.FullPrint ());
 					}
-					throw new Exception ();
-					if (debug)
-						Console.WriteLine (playertask);
 					game.Process (playertask);
 				}
 			} catch (Exception e)

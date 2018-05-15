@@ -106,7 +106,7 @@ namespace SabberStoneCoreAi.Agent {
 			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
 					if (task.Source.GetType ().Equals (typeof (Minion))) {
-						if (((Minion) task.Source).Power.Aura != null) {
+						if (((Minion) task.Source).Power != null && ((Minion) task.Source).Power.Aura != null) {
 							if (((Minion) task.Source).Power.Aura.Type == AuraType.ADJACENT)
 								return task;
 						}

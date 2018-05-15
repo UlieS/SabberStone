@@ -59,12 +59,13 @@ namespace SabberStoneCoreAi.Agent {
 				if (card.Card.Name==("The Coin")){
 					// check if coin would add more options
 					foreach(IPlayable othercards in poGame.CurrentPlayer.HandZone.GetAll ()){
-						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.CanAttack){
+						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.Card.Type=="MINION"){
 							chooseCoin=true;
 						}
 					}
 					
 				}
+				
 				Console.WriteLine("Chose Coin");
 
 				

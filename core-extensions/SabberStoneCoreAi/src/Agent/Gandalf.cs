@@ -44,6 +44,9 @@ namespace SabberStoneCoreAi.Agent {
 				}
 			}
 
+			//play adjacent aura minions
+			PlayerTask summonTask = SummonAuraMinion (poGame);
+
 			// handle pick choose tasks
 			// foreach (PlayerTask task in options) {
 			// 	if (task.PlayerTaskType == PlayerTaskType.PICK) {
@@ -79,14 +82,11 @@ namespace SabberStoneCoreAi.Agent {
 			}
 
 			// summon minions
-			LinkedList<PlayerTask> summonMinions = new LinkedList<PlayerTask> ();
 			foreach (PlayerTask task in options) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
-					summonMinions.AddLast (task);
+					return task;
 				}
 			}
-			if (summonMinions.Count > 0)
-				return summonMinions.First.Value;
 
 			// use hero power
 			foreach (PlayerTask task in options) {
@@ -96,6 +96,15 @@ namespace SabberStoneCoreAi.Agent {
 			}
 
 			return poGame.CurrentPlayer.Options () [0];
+		}
+
+		private PlayerTask SummonAuraMinion (SabberStoneCoreAi.POGame.POGame poGame) {
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
+				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
+					return task;
+				}
+			}
+			return null;
 		}
 
 		public override void InitializeAgent () {

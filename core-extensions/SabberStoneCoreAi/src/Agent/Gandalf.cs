@@ -50,6 +50,23 @@ namespace SabberStoneCoreAi.Agent {
 
 			// 	}
 			// }
+			foreach (IPlayable card in poGame.CurrentPlayer.HandZone.GetAll ()) {
+				bool chooseCoin=false;
+				if (card.Card.Name==("The Coin")){
+					// check if coin would add more options
+					foreach(IPlayable othercards in poGame.CurrentPlayer.HandZone.GetAll ()){
+						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.CanAttack){
+							chooseCoin=true;
+						}
+					}
+					
+				}
+				Console.WriteLine("Chose Coin");
+
+				
+			}
+
+		
 
 			// find taunt minions
 			var tauntMinions = new List<IEntity> { };

@@ -3,6 +3,7 @@ using SabberStoneCore.Config;
 using SabberStoneCore.Enums;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.Agent.ExampleAgents;
+using SabberStoneCoreAi.Meta;
 using SabberStoneCoreAi.POGame;
 
 namespace SabberStoneCoreAi {
@@ -17,6 +18,7 @@ namespace SabberStoneCoreAi {
 				StartPlayer = 2,
 					Player1HeroClass = CardClass.DRUID,
 					Player2HeroClass = CardClass.MAGE,
+					Player1Deck = Decks.MidrangeJadeShaman,
 					FillDecks = true,
 					SkipMulligan = true,
 			};

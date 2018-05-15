@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SabberStoneCore.Enchants;
 using SabberStoneCore.Model.Entities;
 using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
@@ -101,7 +102,12 @@ namespace SabberStoneCoreAi.Agent {
 		private PlayerTask SummonAuraMinion (SabberStoneCoreAi.POGame.POGame poGame) {
 			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
-					return task;
+					if (task.Source.GetType ().Equals (typeof (Minion))) {
+						if (((Minion) task.Source).Power.Aura != null) {
+							if (((Minion) task.Source).Power.Aura.Type == AuraType.ADJACENT)
+								return task;
+						}
+					}
 				}
 			}
 			return null;

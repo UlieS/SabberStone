@@ -48,10 +48,10 @@ namespace SabberStoneCoreAi.Agent {
 			}
 
 			//play adjacent aura minions
-			// PlayerTask summonTask = SummonAuraMinion (poGame);
-			// if (summonTask != null) {
-			// 	return summonTask;
-			// }
+			PlayerTask summonTask = SummonAuraMinion (poGame);
+			if (summonTask != null) {
+				return summonTask;
+			}
 
 			// handle pick choose tasks
 			// foreach (PlayerTask task in options) {

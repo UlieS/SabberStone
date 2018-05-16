@@ -7,6 +7,8 @@ using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
+using SabberStoneCore.Enums;
+using SabberStoneCore.Model;
 
 namespace SabberStoneCoreAi.Agent {
 	class Gandalf : AbstractAgent {
@@ -57,6 +59,26 @@ namespace SabberStoneCoreAi.Agent {
 
 			// 	}
 			// }
+			
+			// Console.WriteLine(poGame.CurrentPlayer.HandZone.GetAll()[0].Card.Rarity);
+			// Console.WriteLine((int) Rarity.COMMON);
+
+			PlayerTask choice=ChooseCoin(poGame);
+			if (choice!=null){
+				return choice;
+			}
+
+			// play by rarity
+			// foreach (PlayerTask task in options){
+			// 	Card highestRarity=task.Source.Card;
+			// 	if (task.PlayerTaskType != PlayerTaskType.END_TURN){
+
+			// 	}
+			// 	Card highestRarity=task.Source.Card;
+			// 	Console.WriteLine(Card);
+				
+				
+			// }
 
 			PlayerTask attackTask = AttackTask (poGame);
 			if (attackTask != null) {
@@ -87,9 +109,27 @@ namespace SabberStoneCoreAi.Agent {
 			return poGame.CurrentPlayer.Options () [0];
 		}
 
+<<<<<<< HEAD
 		/*
 		 * At first we should summon minions that increase the atack of other minions	
 		 */
+=======
+		private PlayerTask ChooseCoin(SabberStoneCoreAi.POGame.POGame poGame) {
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options()) {
+				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD && task.Source.Card.Name==("The Coin")){
+					// check if coin would add more options
+					foreach(IPlayable othercards in poGame.CurrentPlayer.HandZone.GetAll ()){
+						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.Card.Type==CardType.MINION){
+							Console.WriteLine("Chose Coin");
+							return task;
+						}
+					}
+				}				
+			}
+			return null;
+		}
+
+>>>>>>> 816b89596dabcb0831baad472ba25a28ab23dd42
 		private PlayerTask SummonAuraMinion (SabberStoneCoreAi.POGame.POGame poGame) {
 			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {

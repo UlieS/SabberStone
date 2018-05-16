@@ -45,7 +45,7 @@ namespace SabberStoneCoreAi.Agent {
 				}
 			}
 
-			//play adjacent aura minions
+			//play aura minions
 			PlayerTask summonTask = SummonAuraMinion (poGame);
 			if (summonTask != null) {
 				return summonTask;
@@ -58,24 +58,9 @@ namespace SabberStoneCoreAi.Agent {
 			// 	}
 			// }
 
-			// find taunt minions
-			var tauntMinions = new List<IEntity> { };
-			foreach (Minion minion in poGame.CurrentOpponent.BoardZone.GetAll ()) {
-				if (minion.HasTaunt) {
-					tauntMinions.Add (minion);
-				}
-			}
-			foreach (PlayerTask task in options) {
-				if (task.PlayerTaskType == PlayerTaskType.MINION_ATTACK) {
-					// if we have any taunt minions attack them first
-					if (tauntMinions.Contains (task.Target)) {
-						return task;
-					}
-					if (task.Target == poGame.CurrentOpponent.Hero) {
-						return task;
-					}
-				}
-
+			PlayerTask attackTask = AttackTask (poGame);
+			if (attackTask != null) {
+				return attackTask;
 			}
 
 			// let the hero attack
@@ -102,6 +87,9 @@ namespace SabberStoneCoreAi.Agent {
 			return poGame.CurrentPlayer.Options () [0];
 		}
 
+		/*
+		 * At first we should summon minions that increase the atack of other minions	
+		 */
 		private PlayerTask SummonAuraMinion (SabberStoneCoreAi.POGame.POGame poGame) {
 			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
@@ -110,6 +98,44 @@ namespace SabberStoneCoreAi.Agent {
 							if (((Minion) task.Source).Power.Aura.Type == AuraType.ADJACENT)
 								return task;
 						}
+					}
+				}
+			}
+			return null;
+		}
+
+		/*
+		 * Choose what should be attacked
+		 */
+
+		private PlayerTask AttackTask (SabberStoneCoreAi.POGame.POGame poGame) {
+			// find taunt minions
+			var tauntMinions = new List<IEntity> { };
+			foreach (Minion minion in poGame.CurrentOpponent.BoardZone.GetAll ()) {
+				if (minion.HasTaunt) {
+					tauntMinions.Add (minion);
+				}
+			}
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
+				if (task.PlayerTaskType == PlayerTaskType.MINION_ATTACK) {
+					// if we have any taunt minions attack them first
+					if (tauntMinions.Contains (task.Target)) {
+						return task;
+					}
+					Minion attacker = (Minion) task.Source;
+					if (task.Target.GetType ().Equals (typeof (Minion))) {
+						Minion target = (Minion) task.Target;
+						// if we can attack enemy minions so that ours don't die
+						// if (attacker.AttackDamage >= target.Health && target.AttackDamage < attacker.Health) {
+						// 	return task;
+						// }
+						// if our minion has less attack we can sacrifice it by attacking
+						if (attacker.AttackDamage < target.AttackDamage && attacker.AttackDamage >= target.Health) {
+							return task;
+						}
+					}
+					if (task.Target == poGame.CurrentOpponent.Hero) {
+						return task;
 					}
 				}
 			}

@@ -7,6 +7,7 @@ using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
+using SabberStoneCore.Enums;
 
 namespace SabberStoneCoreAi.Agent {
 	class Gandalf : AbstractAgent {
@@ -46,10 +47,10 @@ namespace SabberStoneCoreAi.Agent {
 			}
 
 			//play adjacent aura minions
-			PlayerTask summonTask = SummonAuraMinion (poGame);
-			if (summonTask != null) {
-				return summonTask;
-			}
+			// PlayerTask summonTask = SummonAuraMinion (poGame);
+			// if (summonTask != null) {
+			// 	return summonTask;
+			// }
 
 			// handle pick choose tasks
 			// foreach (PlayerTask task in options) {
@@ -57,24 +58,12 @@ namespace SabberStoneCoreAi.Agent {
 
 			// 	}
 			// }
-			foreach (IPlayable card in poGame.CurrentPlayer.HandZone.GetAll ()) {
-				bool chooseCoin=false;
-				if (card.Card.Name==("The Coin")){
-					// check if coin would add more options
-					foreach(IPlayable othercards in poGame.CurrentPlayer.HandZone.GetAll ()){
-						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.Card.Type=="MINION"){
-							chooseCoin=true;
-						}
-					}
-					
-				}
-				
-				Console.WriteLine("Chose Coin");
-
-				
-			}
 
 		
+			PlayerTask t=ChooseCoin(poGame);
+			if (t!=null){
+				return t;
+			}
 
 			// find taunt minions
 			var tauntMinions = new List<IEntity> { };
@@ -120,11 +109,26 @@ namespace SabberStoneCoreAi.Agent {
 			return poGame.CurrentPlayer.Options () [0];
 		}
 
+		private PlayerTask ChooseCoin(SabberStoneCoreAi.POGame.POGame poGame) {
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options()) {
+				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD && task.Source.Card.Name==("The Coin")){
+					// check if coin would add more options
+					foreach(IPlayable othercards in poGame.CurrentPlayer.HandZone.GetAll ()){
+						if (othercards.Card.Cost==1+poGame.CurrentPlayer.BaseMana && othercards.Card.Type==CardType.MINION){
+							Console.WriteLine("Chose Coin");
+							return task;
+						}
+					}
+				}				
+			}
+			return null;
+		}
+
 		private PlayerTask SummonAuraMinion (SabberStoneCoreAi.POGame.POGame poGame) {
 			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.PLAY_CARD) {
 					if (task.Source.GetType ().Equals (typeof (Minion))) {
-						if (((Minion) task.Source).Power.Aura != null) {
+						if (((Minion) task.Source).Power != null && ((Minion) task.Source).Power.Aura != null) {
 							if (((Minion) task.Source).Power.Aura.Type == AuraType.ADJACENT)
 								return task;
 						}

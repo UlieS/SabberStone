@@ -3,6 +3,8 @@ Hero power (mage) on low health minions
 ChooseTasks -> Pick most valueable card
 attack enemy minions
 Hex? (Spell on enemy minions)
-Coin
+Coin (Ulie)
 Hero power with no mana cost
 play by rarity
+don't play weapon if we already have a weapon
+attack taunt minions intelligently

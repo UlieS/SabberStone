@@ -8,6 +8,7 @@ using SabberStoneCore.Tasks.PlayerTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 using SabberStoneCore.Enums;
+using SabberStoneCore.Model;
 
 namespace SabberStoneCoreAi.Agent {
 	class Gandalf : AbstractAgent {
@@ -58,12 +59,26 @@ namespace SabberStoneCoreAi.Agent {
 
 			// 	}
 			// }
+			
+			// Console.WriteLine(poGame.CurrentPlayer.HandZone.GetAll()[0].Card.Rarity);
+			// Console.WriteLine((int) Rarity.COMMON);
 
-		
-			PlayerTask t=ChooseCoin(poGame);
-			if (t!=null){
-				return t;
+			PlayerTask choice=ChooseCoin(poGame);
+			if (choice!=null){
+				return choice;
 			}
+
+			// play by rarity
+			// foreach (PlayerTask task in options){
+			// 	Card highestRarity=task.Source.Card;
+			// 	if (task.PlayerTaskType != PlayerTaskType.END_TURN){
+
+			// 	}
+			// 	Card highestRarity=task.Source.Card;
+			// 	Console.WriteLine(Card);
+				
+				
+			// }
 
 			// find taunt minions
 			var tauntMinions = new List<IEntity> { };

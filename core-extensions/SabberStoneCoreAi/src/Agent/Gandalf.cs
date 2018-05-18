@@ -7,9 +7,9 @@ using SabberStoneCore.Model;
 using SabberStoneCore.Model.Entities;
 using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
+using SabberStoneCore.Tasks.SimpleTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
-using SabberStoneCore.Tasks.SimpleTasks;
 
 namespace SabberStoneCoreAi.Agent {
 	class Gandalf : AbstractAgent {
@@ -54,18 +54,8 @@ namespace SabberStoneCoreAi.Agent {
 				return summonTask;
 			}
 
-			// handle pick choose tasks
-			// foreach (PlayerTask task in options) {
-			// 	if (task.PlayerTaskType == PlayerTaskType.PICK) {
-
-			// 	}
-			// }
-
-
 			PlayerTask chooseCardTask = ChooseCard (poGame);
-			if (chooseCardTask != null){
-				Console.WriteLine("Chose best card");
-				//Console.WriteLine(chooseCardTask)
+			if (chooseCardTask != null) {
 				return chooseCardTask;
 			}
 
@@ -74,18 +64,14 @@ namespace SabberStoneCoreAi.Agent {
 				return coinTask;
 			}
 
-			
+			PlayerTask heroAttack = HeroAttack (poGame);
+			if (heroAttack != null) {
+				return heroAttack;
+			}
 
 			PlayerTask attackTask = AttackTask (poGame);
 			if (attackTask != null) {
 				return attackTask;
-			}
-
-			// let the hero attack
-			foreach (PlayerTask task in options) {
-				if (task.PlayerTaskType == PlayerTaskType.HERO_ATTACK && task.Target == poGame.CurrentOpponent.Hero) {
-					return task;
-				}
 			}
 
 			// summon minions
@@ -111,21 +97,21 @@ namespace SabberStoneCoreAi.Agent {
 		 */
 
 		private PlayerTask ChooseCard (SabberStoneCoreAi.POGame.POGame poGame) {
-			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()){
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.CHOOSE) {
-					int value=0;
-					int bestChoice= 0;
+					int value = 0;
+					int bestChoice = 0;
 
 					foreach (int entityID in task.Controller.Choice.Choices) {
-						IPlayable card= task.Game.IdEntityDic[entityID];
-						int newValue=card.Card.Cost+(int)card.Card.Rarity;
-						
-						if (value<newValue){
+						IPlayable card = task.Game.IdEntityDic[entityID];
+						int newValue = card.Card.Cost + (int) card.Card.Rarity;
+
+						if (value < newValue) {
 							bestChoice++;
-							value=newValue;
-						}	
+							value = newValue;
+						}
 					}
-					return poGame.CurrentPlayer.Options ()[bestChoice];
+					return poGame.CurrentPlayer.Options () [bestChoice];
 				}
 			}
 			return null;
@@ -163,6 +149,26 @@ namespace SabberStoneCoreAi.Agent {
 				}
 			}
 			return null;
+		}
+
+		/*
+		 * The hero should destroy low health minions first
+		 */
+
+		private PlayerTask HeroAttack (SabberStoneCoreAi.POGame.POGame poGame) {
+			// find taunt minions
+			var tauntMinions = new List<IEntity> { };
+			foreach (Minion minion in poGame.CurrentOpponent.BoardZone.GetAll ()) {
+				if (minion.HasTaunt) {
+					tauntMinions.Add (minion);
+				}
+			}
+			foreach (PlayerTask task in options) {
+				if (task.PlayerTaskType == PlayerTaskType.HERO_ATTACK) {
+					if (task.Target == poGame.CurrentOpponent.Hero)
+						return task;
+				}
+			}
 		}
 
 		/*

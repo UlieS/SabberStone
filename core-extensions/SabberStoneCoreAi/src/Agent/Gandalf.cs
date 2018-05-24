@@ -64,7 +64,6 @@ namespace SabberStoneCoreAi.Agent {
 
 			PlayerTask chooseCardTask = ChooseCard (poGame);
 			if (chooseCardTask != null){
-				Console.WriteLine("Chose best card");
 				return chooseCardTask;
 			}
 

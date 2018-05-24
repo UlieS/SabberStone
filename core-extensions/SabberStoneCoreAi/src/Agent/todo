@@ -1,10 +1,13 @@
 Hero attack on low health minions
 Hero power (mage) on low health minions
-ChooseTasks -> Pick most valueable card
 attack enemy minions
 Hex? (Spell on enemy minions)
-Coin (Ulie)
 Hero power with no mana cost
 play by rarity
 don't play weapon if we already have a weapon
 attack taunt minions intelligently
+maximize mana usage
+red flag
+
+3 heros definitely being used:
+Shaman, Mage, Warrior

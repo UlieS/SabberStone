@@ -9,6 +9,7 @@ using SabberStoneCore.Tasks;
 using SabberStoneCore.Tasks.PlayerTasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
+using SabberStoneCore.Tasks.SimpleTasks;
 
 namespace SabberStoneCoreAi.Agent {
 	class Gandalf : AbstractAgent {
@@ -60,24 +61,19 @@ namespace SabberStoneCoreAi.Agent {
 			// 	}
 			// }
 
-			// Console.WriteLine(poGame.CurrentPlayer.HandZone.GetAll()[0].Card.Rarity);
-			// Console.WriteLine((int) Rarity.COMMON);
 
-			PlayerTask choice = ChooseCoin (poGame);
-			if (choice != null) {
-				return choice;
+			PlayerTask chooseCardTask = ChooseCard (poGame);
+			if (chooseCardTask != null){
+				Console.WriteLine("Chose best card");
+				return chooseCardTask;
 			}
 
-			// play by rarity
-			// foreach (PlayerTask task in options){
-			// 	Card highestRarity=task.Source.Card;
-			// 	if (task.PlayerTaskType != PlayerTaskType.END_TURN){
+			PlayerTask coinTask = ChooseCoin (poGame);
+			if (coinTask != null) {
+				return coinTask;
+			}
 
-			// 	}
-			// 	Card highestRarity=task.Source.Card;
-			// 	Console.WriteLine(Card);
-
-			// }
+			
 
 			PlayerTask attackTask = AttackTask (poGame);
 			if (attackTask != null) {
@@ -106,6 +102,32 @@ namespace SabberStoneCoreAi.Agent {
 			}
 
 			return poGame.CurrentPlayer.Options () [0];
+		}
+
+		/* 
+		 * When presented with multiple Cards to pick from, choose the one with 
+		 * the highest mana and rarity combined	
+		 */
+
+		private PlayerTask ChooseCard (SabberStoneCoreAi.POGame.POGame poGame) {
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()){
+				if (task.PlayerTaskType == PlayerTaskType.CHOOSE) {
+					int value=0;
+					int bestChoice= 0;
+
+					foreach (int entityID in task.Controller.Choice.Choices) {
+						IPlayable card= task.Game.IdEntityDic[entityID];
+						int newValue=card.Card.Cost+(int)card.Card.Rarity;
+						
+						if (value<newValue){
+							bestChoice++;
+							value=newValue;
+						}	
+					}
+					return poGame.CurrentPlayer.Options ()[bestChoice];
+				}
+			}
+			return null;
 		}
 
 		/*

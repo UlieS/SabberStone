@@ -56,6 +56,7 @@ namespace SabberStoneCoreAi.Agent {
 
 			PlayerTask chooseCardTask = ChooseCard (poGame);
 			if (chooseCardTask != null) {
+
 				return chooseCardTask;
 			}
 

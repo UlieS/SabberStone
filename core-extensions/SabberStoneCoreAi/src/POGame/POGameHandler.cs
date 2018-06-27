@@ -66,8 +66,8 @@ namespace SabberStoneCoreAi.POGame {
 
 					if (debug) {
 						Console.WriteLine ("Turn " + game.Turn);
-						Console.WriteLine (Visualizer.Visualize (game));
-						Console.WriteLine (playertask.FullPrint ());
+						//Console.WriteLine (Visualizer.Visualize (game));
+						//Console.WriteLine (playertask.FullPrint ());
 					}
 					game.Process (playertask);
 				}

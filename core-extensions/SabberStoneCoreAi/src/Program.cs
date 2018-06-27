@@ -17,20 +17,21 @@ namespace SabberStoneCoreAi {
 			GameConfig gameConfig = new GameConfig {
 				StartPlayer = 2,
 					Player1HeroClass = CardClass.DRUID,
-					Player2HeroClass = CardClass.MAGE,
+					Player2HeroClass = CardClass.WARLOCK,
 					Player1Deck = Decks.MidrangeJadeShaman,
+					Player2Deck = Decks.RenoKazakusMage,
 					FillDecks = true,
 					SkipMulligan = true,
 			};
 
 			Console.WriteLine ("Setup POGameHandler");
-			AbstractAgent player1 = new Gandalf ();
+			AbstractAgent player1 = new RandomAgentLateEnd ();
 			AbstractAgent player2 = new Gandalf ();
 			var gameHandler = new POGameHandler (gameConfig, player1, player2, debug : true);
 
 			Console.WriteLine ("PlayGame");
 			gameHandler.PlayGame ();
-			//gameHandler.PlayGames(10);
+			//gameHandler.PlayGames (100);
 			GameStats gameStats = gameHandler.getGameStats ();
 
 			gameStats.printResults ();

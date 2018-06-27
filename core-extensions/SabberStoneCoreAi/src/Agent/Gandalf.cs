@@ -84,7 +84,13 @@ namespace SabberStoneCoreAi.Agent {
 			// use hero power
 			foreach (PlayerTask task in options) {
 				if (task.PlayerTaskType == PlayerTaskType.HERO_POWER) {
-					return task;
+					if (poGame.CurrentPlayer.BaseClass == Cards.HeroClasses[5]) { // WARLOCK
+						if (poGame.CurrentPlayer.Hero.Health > 20) {
+							return task;
+						}
+					} else {
+						return task;
+					}
 				}
 			}
 
@@ -163,12 +169,13 @@ namespace SabberStoneCoreAi.Agent {
 					tauntMinions.Add (minion);
 				}
 			}
-			foreach (PlayerTask task in options) {
+			foreach (PlayerTask task in poGame.CurrentPlayer.Options ()) {
 				if (task.PlayerTaskType == PlayerTaskType.HERO_ATTACK) {
 					if (task.Target == poGame.CurrentOpponent.Hero)
 						return task;
 				}
 			}
+			return null;
 		}
 
 		/*
